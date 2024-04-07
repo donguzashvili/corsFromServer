@@ -18,7 +18,7 @@ app.get("/latest-currency", async (req, res) => {
   } catch (error) {
     console.error(error.response.data);
     console.error("Error fetching latest currency:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error", errorFromApi: error.message, detailedInfo: `${error}` });
   }
 });
 
@@ -31,7 +31,7 @@ app.get("/convert-currency", async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error("Error converting currency:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Internal Server Error", errorFromApi: error.message, detailedInfo: `${error}` });
   }
 });
 
