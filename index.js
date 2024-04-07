@@ -8,6 +8,8 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const baseUrl = "https://pro-api.coinmarketcap.com/";
+
 app.get("/latest-currency", async (req, res) => {
   const { start, limit } = req.query;
   const apiKey = req.headers["x-api-key"];
@@ -30,18 +32,17 @@ app.get("/convert-currency", async (req, res) => {
     const response = await getConvertCurrency({ convertFromId, convertToSymbol, apiKey });
     res.json(response.data);
   } catch (error) {
-    console.error("Error converting currency:", error.message);
+    console.error("Error converting currency:", error.response);
     res.status(500).json({ error: "Internal Server Error", errorFromApi: error.message, detailedInfo: `${error}` });
   }
 });
 
 const getLatestCurrency = async ({ start, limit, apiKey }) => {
-  const baseUrl = "https://pro-api.coinmarketcap.com/";
-
   const url = `${baseUrl}v1/cryptocurrency/listings/latest?start=${start}&limit=${limit}`;
   const headers = {
     "X-CMC_PRO_API_KEY": apiKey,
     Accept: "application/json",
+    "Content-Type": "application/json",
   };
 
   const response = await axios.get(url, { headers });
@@ -49,12 +50,11 @@ const getLatestCurrency = async ({ start, limit, apiKey }) => {
 };
 
 const getConvertCurrency = async ({ convertFromId, convertToSymbol, apiKey }) => {
-  const baseUrl = "https://pro-api.coinmarketcap.com/";
-
-  const url = `${baseUrl}/v1/cryptocurrency/quotes/latest?id=${convertFromId}&convert=${convertToSymbol}`;
+  const url = `${baseUrl}v1/cryptocurrency/quotes/latest?id=${convertFromId}&convert=${convertToSymbol}`;
   const headers = {
     "X-CMC_PRO_API_KEY": apiKey,
     Accept: "application/json",
+    "Content-Type": "application/json",
   };
 
   const response = await axios.get(url, { headers });
